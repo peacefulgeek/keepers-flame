@@ -1,0 +1,48 @@
+{
+  "name": "keepers-flame",
+  "version": "1.0.0",
+  "description": "The Keeper's Flame — When You're the One Holding Everyone Together",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && vite build --ssr src/entry-server.tsx",
+    "start": "NODE_ENV=production node server/index.mjs",
+    "preview": "node server/index.mjs"
+  },
+  "keywords": [],
+  "author": "The Keeper's Flame Editorial",
+  "license": "ISC",
+  "homepage": "https://keepersflame.love",
+  "packageManager": "pnpm@10.32.1",
+  "dependencies": {
+    "compression": "^1.8.1",
+    "express": "^5.2.1",
+    "feed": "^5.2.0",
+    "helmet": "^8.1.0",
+    "node-cron": "^4.2.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.2",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.4.27",
+    "esbuild": "^0.27.4",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
+  }
+}
