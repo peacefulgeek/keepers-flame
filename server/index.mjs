@@ -197,6 +197,9 @@ Website: https://keepersflame.love
         { url: "https://keepersflame.love/about", title: "About" },
         { url: "https://keepersflame.love/start-here", title: "Start Here" },
         { url: "https://keepersflame.love/burnout-check", title: "Caregiver Burnout Assessment" },
+        { url: "https://keepersflame.love/tools", title: "Tools We Recommend" },
+        { url: "https://keepersflame.love/quizzes", title: "Caregiver Quizzes" },
+        { url: "https://keepersflame.love/assessments", title: "Caregiver Assessments" },
         ...CATEGORIES.map(c => ({ url: `https://keepersflame.love/${c.slug}`, title: c.name })),
         ...published.map(a => ({ url: `https://keepersflame.love/${a.category}/${a.slug}`, title: a.title })),
       ],
@@ -220,6 +223,9 @@ Website: https://keepersflame.love
       { loc: 'https://keepersflame.love/about', priority: '0.7', changefreq: 'monthly' },
       { loc: 'https://keepersflame.love/start-here', priority: '0.8', changefreq: 'weekly' },
       { loc: 'https://keepersflame.love/burnout-check', priority: '0.8', changefreq: 'monthly' },
+      { loc: 'https://keepersflame.love/tools', priority: '0.8', changefreq: 'weekly' },
+      { loc: 'https://keepersflame.love/quizzes', priority: '0.7', changefreq: 'monthly' },
+      { loc: 'https://keepersflame.love/assessments', priority: '0.7', changefreq: 'monthly' },
       ...CATEGORIES.map(c => ({ loc: `https://keepersflame.love/${c.slug}`, priority: '0.8', changefreq: 'daily' })),
       ...published.map(a => ({ loc: `https://keepersflame.love/${a.category}/${a.slug}`, priority: '0.7', changefreq: 'monthly' })),
     ];
@@ -585,7 +591,7 @@ Allow: /
       "mainEntity": {
         "@type": "Person",
         "name": "Kalesh",
-        "jobTitle": "Spiritual Advisor",
+        "jobTitle": "Consciousness Teacher & Writer",
         "url": "https://kalesh.love",
         "description": "Kalesh is a consciousness teacher and writer whose work explores the intersection of ancient contemplative traditions and modern neuroscience.",
       },
@@ -606,7 +612,7 @@ Allow: /
       }
 
       // Determine 404 status
-      const knownPaths = ['', 'articles', 'about', 'start-here', 'privacy', 'terms', 'burnout-check'];
+      const knownPaths = ['', 'articles', 'about', 'start-here', 'privacy', 'terms', 'burnout-check', 'tools', 'quizzes', 'assessments'];
       const catSlugs = CATEGORIES.map(c => c.slug);
       let is404 = false;
       if (urlParts.length === 0 || knownPaths.includes(urlParts[0])) {

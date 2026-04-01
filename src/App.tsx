@@ -11,6 +11,9 @@ import { TermsPage } from './pages/TermsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { BurnoutCheckPage } from './pages/BurnoutCheckPage';
 import { QuizPage } from './pages/QuizPage';
+import { ToolsPage } from './pages/ToolsPage';
+import { QuizzesPage } from './pages/QuizzesPage';
+import { AssessmentsPage } from './pages/AssessmentsPage';
 import './styles/global.css';
 
 export default function App() {
@@ -21,6 +24,9 @@ export default function App() {
         <Route path="/articles" element={<ArticlesPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/start-here" element={<StartHerePage />} />
+        <Route path="/tools" element={<ToolsPage />} />
+        <Route path="/quizzes" element={<QuizzesPage />} />
+        <Route path="/assessments" element={<AssessmentsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/burnout-check" element={<BurnoutCheckPage />} />

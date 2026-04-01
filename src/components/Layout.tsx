@@ -36,7 +36,10 @@ export function Layout() {
         {CATEGORIES.map(c => (
           <Link key={c.slug} to={`/${c.slug}`} onClick={() => setMobileOpen(false)}>{c.name}</Link>
         ))}
+        <Link to="/tools" onClick={() => setMobileOpen(false)}>Tools We Recommend</Link>
         <Link to="/start-here" onClick={() => setMobileOpen(false)}>Start Here</Link>
+        <Link to="/quizzes" onClick={() => setMobileOpen(false)}>Quizzes</Link>
+        <Link to="/assessments" onClick={() => setMobileOpen(false)}>Assessments</Link>
         <Link to="/about" onClick={() => setMobileOpen(false)}>About</Link>
         <Link to="/burnout-check" onClick={() => setMobileOpen(false)}>Burnout Check</Link>
       </nav>
@@ -51,6 +54,7 @@ export function Layout() {
           <nav className="header-nav">
             <button onClick={() => setSearchOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#6B4C3B', fontFamily: 'var(--font-body)' }} aria-label="Search articles">Search</button>
             <Link to="/articles">Sections</Link>
+            <Link to="/tools">Tools</Link>
             <Link to="/start-here">Start Here</Link>
             <Link to="/about">About</Link>
           </nav>
@@ -100,6 +104,9 @@ export function Layout() {
           <div className="footer-col">
             <h4>Resources</h4>
             <Link to="/start-here">Start Here</Link>
+            <Link to="/tools">Tools We Recommend</Link>
+            <Link to="/quizzes">Quizzes</Link>
+            <Link to="/assessments">Assessments</Link>
             <Link to="/burnout-check">Burnout Assessment</Link>
             <Link to="/articles">All Articles</Link>
             <Link to="/about">About</Link>
@@ -108,13 +115,11 @@ export function Layout() {
             <h4>Legal</h4>
             <Link to="/privacy">Privacy Policy</Link>
             <Link to="/terms">Terms of Service</Link>
-            <p style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '1rem', lineHeight: 1.4 }}>
-              This site provides educational content only. It is not a substitute for professional medical, psychological, or caregiving advice.
-            </p>
           </div>
         </div>
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} The Keeper's Flame. All rights reserved.</p>
+          <p style={{ fontSize: '0.7rem', opacity: 0.5, marginTop: '0.5rem' }}>As an Amazon Associate I earn from qualifying purchases.</p>
         </div>
       </footer>
 

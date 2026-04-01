@@ -29,6 +29,7 @@ export function ArticlePage() {
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareText = encodeURIComponent(article.title);
+  const hasAmazonLinks = article.body.includes('amazon.com') || article.body.includes('tag=spankyspinola');
 
   return (
     <div className="container">
@@ -61,6 +62,13 @@ export function ArticlePage() {
             <span>{article.readingTime} min read</span>
           </div>
 
+          {/* Affiliate disclosure box - only shown on articles with Amazon links */}
+          {hasAmazonLinks && (
+            <div className="affiliate-disclosure" style={{ margin: '1rem 0' }}>
+              <p>This article contains affiliate links. As an Amazon Associate I earn from qualifying purchases. <Link to="/privacy">Learn more</Link>.</p>
+            </div>
+          )}
+
           {/* Share buttons top */}
           <div className="share-buttons">
             <button className="share-btn" onClick={() => navigator.clipboard?.writeText(shareUrl)} aria-label="Copy link to clipboard">Copy Link</button>
@@ -70,11 +78,16 @@ export function ArticlePage() {
 
           <div className="article-content" dangerouslySetInnerHTML={{ __html: bodyWithIds }} />
 
+          {/* Health Disclaimer */}
+          <div className="health-disclaimer">
+            <p>This article is for educational purposes only and is not a substitute for professional medical, psychological, or caregiving advice. If you are in crisis, contact the 988 Suicide and Crisis Lifeline by calling or texting 988.</p>
+          </div>
+
           {/* FAQ Section */}
           {article.faqs && article.faqs.length > 0 && (
             <section className="faq-section">
               <h2>Frequently Asked Questions</h2>
-              {article.faqs.map((faq, i) => (
+              {article.faqs.map((faq: [string, string], i: number) => (
                 <div key={i} className="faq-item">
                   <div className="faq-question">{faq[0]}</div>
                   <div className="faq-answer">{faq[1]}</div>
@@ -98,11 +111,12 @@ export function ArticlePage() {
         <aside className="article-sidebar">
           {/* Bio Card */}
           <div className="bio-card">
-            <img src="https://keepers-flame.b-cdn.net/images/kalesh-portrait.webp" alt="Kalesh" width={80} height={80} loading="lazy" />
+            <img src="https://keepers-flame.b-cdn.net/images/kalesh-portrait.webp" alt="Kalesh — Consciousness Teacher and Writer" width={80} height={80} loading="lazy" style={{ borderRadius: '50%', objectFit: 'cover' }} />
             <h4>Kalesh</h4>
             <div className="bio-title">Consciousness Teacher &amp; Writer</div>
             <p>Kalesh is a consciousness teacher and writer whose work explores the intersection of ancient contemplative traditions and modern neuroscience. With decades of practice in meditation, breathwork, and somatic inquiry, he guides others toward embodied awareness.</p>
-            <a href="https://kalesh.love" className="bio-link">Visit Kalesh's Website</a>
+            <a href="https://kalesh.love" className="bio-link" target="_blank" rel="noopener">Visit Kalesh's Website</a>
+            <a href="https://kalesh.love" className="bio-link session-link" target="_blank" rel="noopener">Book a Session</a>
           </div>
 
           {/* Same Category */}
@@ -125,6 +139,13 @@ export function ArticlePage() {
                 <span>{a.title}</span>
               </Link>
             ))}
+          </div>
+
+          {/* Tools Promo */}
+          <div className="sidebar-section" style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--color-cream)', borderRadius: '8px' }}>
+            <h4>Caregiver's Toolkit</h4>
+            <p style={{ fontSize: '0.85rem', lineHeight: 1.5, marginBottom: '0.75rem' }}>Books, tools, and resources we trust for the caregiving journey.</p>
+            <Link to="/tools" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-accent)' }}>Browse Tools</Link>
           </div>
         </aside>
       </div>

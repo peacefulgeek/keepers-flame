@@ -812,3 +812,226 @@ img { max-width: 100%; height: auto; }
 .page-404 { text-align: center; padding: 4rem 0; }
 .page-404 h1 { font-size: 4rem; color: var(--color-primary); }
 .page-404 .edition { font-size: 1.2rem; color: var(--color-text-light); margin-bottom: 2rem; }
+
+/* === AFFILIATE DISCLOSURE === */
+.affiliate-disclosure {
+  background: #FFF8E7;
+  border: 1px solid #E8D5A3;
+  border-left: 3px solid var(--color-accent);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  border-radius: 4px;
+}
+.affiliate-disclosure a { color: var(--color-primary); font-weight: 600; }
+
+/* === HEALTH DISCLAIMER === */
+.health-disclaimer {
+  background: var(--color-secondary);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  border-radius: 4px;
+  line-height: 1.5;
+}
+.health-disclaimer p { margin: 0; }
+
+/* === SESSION LINK === */
+.bio-card .session-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  background: var(--color-accent);
+  color: white;
+}
+.bio-card .session-link:hover { background: var(--color-primary); }
+
+/* === TOOLS PAGE === */
+.tools-page h1 { text-align: center; }
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+.tool-card {
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: white;
+  transition: box-shadow 0.2s;
+}
+.tool-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.tool-card h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+.tool-card h3 a { color: var(--color-primary); }
+.tool-card h3 a:hover { color: var(--color-accent); }
+.tool-card p {
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+  line-height: 1.6;
+  margin: 0;
+}
+.tool-card p a { color: var(--color-primary); font-weight: 600; }
+.paid-link-tag {
+  font-size: 0.65rem;
+  color: var(--color-text-light);
+  font-weight: 400;
+  margin-left: 0.3rem;
+  font-family: var(--font-body);
+}
+
+/* === QUIZZES PAGE === */
+.quizzes-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+.quiz-card {
+  padding: 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: white;
+}
+.quiz-card h3 {
+  font-family: var(--font-headline);
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+.quiz-card p { font-size: 0.95rem; color: var(--color-text-light); line-height: 1.6; }
+.quiz-active { background: var(--color-secondary); }
+.quiz-active .quiz-progress {
+  font-size: 0.75rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+.quiz-options { display: grid; gap: 0.75rem; }
+.quiz-result { border-color: var(--color-primary); }
+.quiz-result h3 { color: var(--color-primary); }
+.quiz-result ul { margin: 1rem 0 0 1.5rem; }
+.quiz-result li { margin-bottom: 0.5rem; font-size: 0.95rem; line-height: 1.5; }
+
+.btn-primary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+.btn-primary:hover { background: var(--color-accent); color: white; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.btn-secondary:hover { background: var(--color-primary); color: white; }
+
+.btn-outline {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.btn-outline:hover { background: var(--color-primary); color: white; }
+
+/* === ASSESSMENTS PAGE === */
+.assessments-grid { display: grid; gap: 1.5rem; }
+.assessment-card {
+  padding: 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: white;
+}
+.assessment-card h3 {
+  font-family: var(--font-headline);
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+}
+.assessment-card p { font-size: 0.95rem; color: var(--color-text-light); line-height: 1.6; }
+.assessment-active { background: var(--color-secondary); }
+.assessment-result { border-color: var(--color-primary); }
+.assessment-result h3 { color: var(--color-primary); }
+.assessment-result .score-display {
+  font-size: 1.5rem;
+  font-family: var(--font-headline);
+  color: var(--color-accent);
+  margin-bottom: 1rem;
+}
+.assessment-result ul { margin: 1rem 0 0 1.5rem; }
+.assessment-result li { margin-bottom: 0.5rem; font-size: 0.95rem; line-height: 1.5; }
+
+.assessment-statements { display: grid; gap: 1rem; }
+.statement-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.statement-text {
+  flex: 1;
+  font-size: 0.9rem;
+  margin: 0;
+  line-height: 1.4;
+}
+.rating-buttons { display: flex; gap: 0.3rem; flex-shrink: 0; }
+.rating-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.rating-btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.rating-btn.active {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .tools-grid { grid-template-columns: 1fr; }
+  .statement-row { flex-direction: column; align-items: flex-start; }
+  .rating-buttons { align-self: flex-end; }
+  .color-cream { padding: 1rem; }
+}
