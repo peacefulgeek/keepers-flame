@@ -252,9 +252,9 @@ REQUIREMENTS:
 - Cite these researchers naturally: ${selectedResearchers.join(', ')}
 - ${faqCount} FAQ Q&A pairs at the end (or none if 0)
 - Backlink type: ${backlinkType}
-${backlinkType === 'kalesh' ? `- Include 1 link to ${AUTHOR_URL} with topically relevant anchor text` : ''}
-${backlinkType === 'external' ? `- Include 1 external link with rel="nofollow" to one of: ${EXTERNAL_AUTHORITY_SITES.join(', ')}` : ''}
-${backlinkType === 'amazon' ? `- Include 2-3 soft Amazon product recommendations with tag=${AMAZON_TAG} (use real product names and ASINs)` : ''}
+- ALWAYS include exactly 3 Amazon product recommendations naturally embedded in the text. Use real product names relevant to the article topic (caregiver books, self-care tools, journals, practical aids, meditation supplies, comfort items). Format each as: <a href="https://www.amazon.com/dp/ASIN?tag=${AMAZON_TAG}" rel="nofollow sponsored">Product Name</a>. Spread them at roughly 1/3, 1/2, and 2/3 through the article. Introduce each with a natural sentence like "One resource I often point people toward is..." or "Something that has helped many caregivers I work with is..."
+${backlinkType === 'kalesh' ? `- Also include 1 link to ${AUTHOR_URL} with topically relevant anchor text` : ''}
+${backlinkType === 'external' ? `- Also include 1 external link with rel="nofollow" to one of: ${EXTERNAL_AUTHORITY_SITES.join(', ')}` : ''}
 - Include 2-3 internal cross-links using these: ${internalLinks.slice(0, 3).map(l => `<a href="${l.url}">${l.title}</a>`).join(', ')}
 - Weave in these Kalesh voice phrases naturally: ${selectedPhrases.map(p => `"${p}"`).join('; ')}
 - Aggressively vary sentence lengths. Mix 5-word sentences with 30-word sentences.
@@ -293,6 +293,38 @@ Return JSON: { "title": "...", "excerpt": "...", "body": "...", "faqs": [["Q","A
     
     // Post-process: clean AI words and emdashes
     article.body = cleanAIWords(article.body);
+
+    // Verify 3 Amazon links exist; inject fallbacks if LLM missed any
+    const amazonCount = (article.body.match(/amazon\.com/g) || []).length;
+    if (amazonCount < 3) {
+      const fallbackProducts = [
+        { name: 'The Body Keeps the Score by Bessel van der Kolk', asin: '0143127748', desc: 'a book that changed how many people understand trauma and the nervous system' },
+        { name: 'Burnout: The Secret to Unlocking the Stress Cycle by Emily Nagoski', asin: '0399592458', desc: 'a book that finally explains why rest alone does not fix burnout' },
+        { name: 'Weighted Blanket by YnM', asin: 'B073429DV2', desc: 'a weighted blanket that helps the nervous system settle when sleep will not come' },
+        { name: 'The 36-Hour Day by Nancy Mace', asin: '1421422239', desc: 'the most practical guide to dementia caregiving that exists' },
+        { name: 'Heating Pad by Mighty Bliss', asin: 'B07GQ4YDQG', desc: 'a heating pad for the back pain that comes from lifting, bending, and carrying' },
+        { name: 'Meditation Cushion by Florensi', asin: 'B07VB3YZRQ', desc: 'a meditation cushion for the five minutes of stillness that matter more than you think' },
+      ];
+      const templates = [
+        'One resource I often point people toward is',
+        'Something that has helped many caregivers I work with is',
+        'A practical starting point is',
+      ];
+      const needed = 3 - amazonCount;
+      const shuffledProducts = fallbackProducts.sort(() => Math.random() - 0.5);
+      for (let i = 0; i < needed; i++) {
+        const p = shuffledProducts[i];
+        const t = templates[i % templates.length];
+        const linkHtml = `<p>${t} <a href="https://www.amazon.com/dp/${p.asin}?tag=${AMAZON_TAG}" rel="nofollow sponsored">${p.name}</a>, ${p.desc}.</p>`;
+        // Insert before the health disclaimer
+        if (article.body.includes('informational purposes')) {
+          article.body = article.body.replace(/<p><em>This article/,  linkHtml + '\n<p><em>This article');
+        } else {
+          article.body += '\n' + linkHtml;
+        }
+      }
+      console.log(`[generate] Injected ${needed} fallback Amazon links.`);
+    }
     
     const slug = article.title.toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
