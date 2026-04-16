@@ -17,6 +17,7 @@ const SITE_NAME = "The Keeper's Flame";
 const AUTHOR_NAME = "Kalesh";
 const AUTHOR_TITLE = "Consciousness Teacher & Writer";
 const AUTHOR_URL = "https://kalesh.love";
+const AMAZON_TAG = "spankyspinola-20";
 
 import fs from 'fs';
 import path from 'path';
@@ -66,7 +67,102 @@ const KALESH_PHRASES = [
   "Your nervous system doesn't care about your philosophy. It cares about what happened at three years old.",
   "Not every insight requires action. Some just need to be witnessed.",
   "You are not a problem to be solved. You are a process to be witnessed.",
+  "Silence is not the absence of noise. It's the presence of attention.",
+  "The breath doesn't need your management. It needs your companionship.",
+  "We are not our thoughts, but we are responsible for our relationship to them.",
+  "Reading about meditation is to meditation what reading the menu is to eating.",
+  "The wellness industry sells solutions to problems it helps you believe you have.",
+  "Complexity is the ego's favorite hiding place.",
+  "The body has a grammar. Most of us never learned to read it.",
+  "Freedom is not the absence of constraint. It's the capacity to choose your relationship to it.",
+  "The most important things in life cannot be understood, only experienced.",
+  "The brain is prediction machinery. Anxiety is just prediction running without a stop button.",
 ];
+
+const CONVERSATIONAL_INTERJECTIONS = [
+  "Stay with me here.",
+  "I know, I know.",
+  "Wild, right?",
+  "Think about that for a second.",
+  "Here is the thing though.",
+  "And honestly?",
+  "Look.",
+  "Sit with that for a moment.",
+  "No really.",
+  "Bear with me.",
+];
+
+const RESEARCHERS = [
+  "Jiddu Krishnamurti", "Alan Watts", "Sam Harris", "Sadhguru", "Tara Brach",
+  "Pauline Boss", "Barry Jacobs", "Christina Maslach", "Bessel van der Kolk",
+  "Stephen Porges", "Gabor Mate", "Jon Kabat-Zinn",
+];
+
+const BANNED_WORDS = [
+  "profound", "profoundly", "transformative", "holistic", "nuanced", "multifaceted",
+  "delve", "delving", "tapestry", "landscape", "paradigm", "synergy",
+  "leverage", "leveraging", "robust", "utilize", "utilizing", "facilitate",
+  "facilitating", "innovative", "streamline", "streamlining", "optimize",
+  "optimizing", "pivotal", "realm", "embark", "embarking", "foster", "fostering",
+  "moreover", "furthermore", "additionally", "consequently", "subsequently",
+  "needless to say", "in conclusion", "it is important to note", "it is worth noting",
+  "manifest", "manifesting", "manifestation", "lean into", "leaning into",
+  "showing up for", "show up for", "authentic self", "safe space", "hold space",
+  "holding space", "sacred container", "raise your vibration",
+];
+
+// Post-process to remove any AI words that slip through
+function cleanAIWords(text) {
+  const replacements = {
+    'profound': 'deep', 'profoundly': 'deeply', 'transformative': 'life-changing',
+    'holistic': 'whole-person', 'nuanced': 'layered', 'multifaceted': 'complex',
+    'delve': 'dig', 'delving': 'digging', 'tapestry': 'web',
+    'landscape': 'territory', 'paradigm': 'framework', 'synergy': 'connection',
+    'leverage': 'use', 'leveraging': 'using', 'robust': 'strong',
+    'utilize': 'use', 'utilizing': 'using', 'facilitate': 'support',
+    'facilitating': 'supporting', 'innovative': 'creative',
+    'streamline': 'simplify', 'streamlining': 'simplifying',
+    'optimize': 'improve', 'optimizing': 'improving',
+    'pivotal': 'critical', 'realm': 'territory',
+    'embark': 'start', 'embarking': 'starting',
+    'foster': 'build', 'fostering': 'building',
+    'moreover': 'And', 'furthermore': 'And',
+    'additionally': 'Also', 'consequently': 'So', 'subsequently': 'Then',
+  };
+  
+  for (const [word, replacement] of Object.entries(replacements)) {
+    const regex = new RegExp(`\\b${word}\\b`, 'gi');
+    text = text.replace(regex, (match) => {
+      return match[0] === match[0].toUpperCase()
+        ? replacement[0].toUpperCase() + replacement.slice(1)
+        : replacement;
+    });
+  }
+  
+  // Remove emdashes
+  text = text.replace(/ \u2014 /g, ', ').replace(/\u2014/g, ', ');
+  text = text.replace(/ \u2013 /g, ', ').replace(/\u2013/g, ', ');
+  
+  // Remove banned phrases
+  text = text.replace(/this is where\b/gi, 'Here');
+  text = text.replace(/lean into/gi, 'move toward');
+  text = text.replace(/leaning into/gi, 'moving toward');
+  text = text.replace(/showing up for/gi, 'being there for');
+  text = text.replace(/show up for/gi, 'be there for');
+  text = text.replace(/authentic self/gi, 'real self');
+  text = text.replace(/safe space/gi, 'place of trust');
+  text = text.replace(/hold space/gi, 'sit with');
+  text = text.replace(/holding space/gi, 'sitting with');
+  text = text.replace(/sacred container/gi, 'trusted ground');
+  text = text.replace(/raise your vibration/gi, 'shift your attention');
+  text = text.replace(/manifest(?:ing|ation)?/gi, 'create');
+  text = text.replace(/needless to say/gi, 'Obviously');
+  text = text.replace(/in conclusion/gi, 'So');
+  text = text.replace(/it is important to note/gi, 'Worth noting');
+  text = text.replace(/it is worth noting/gi, 'Worth noting');
+  
+  return text;
+}
 
 async function main() {
   if (!AUTO_GEN_ENABLED) {
@@ -92,9 +188,9 @@ async function main() {
   for (const a of articles) categoryCounts[a.category] = (categoryCounts[a.category] || 0) + 1;
   const minCat = CATEGORIES.reduce((a, b) => (categoryCounts[a.slug] || 0) <= (categoryCounts[b.slug] || 0) ? a : b);
 
-  // Determine backlink type
+  // Determine backlink type: 14% kalesh, 33% amazon, 23% external, 30% internal
   const rand = Math.random();
-  const backlinkType = rand < 0.23 ? 'kalesh' : rand < 0.65 ? 'external' : 'internal';
+  const backlinkType = rand < 0.14 ? 'kalesh' : rand < 0.47 ? 'amazon' : rand < 0.70 ? 'external' : 'internal';
 
   // Pick FAQ count
   const faqRand = Math.random();
@@ -109,6 +205,13 @@ async function main() {
   const shuffled = [...KALESH_PHRASES].sort(() => Math.random() - 0.5);
   const selectedPhrases = shuffled.slice(0, phraseCount);
 
+  // Pick interjections (2 random)
+  const interjections = [...CONVERSATIONAL_INTERJECTIONS].sort(() => Math.random() - 0.5).slice(0, 2);
+
+  // Pick researchers (1-2 random)
+  const researcherCount = 1 + Math.floor(Math.random() * 2);
+  const selectedResearchers = [...RESEARCHERS].sort(() => Math.random() - 0.5).slice(0, researcherCount);
+
   // Pick existing articles for internal links
   const internalLinks = articles
     .filter(a => a.category !== minCat.slug)
@@ -116,26 +219,47 @@ async function main() {
     .slice(0, 5)
     .map(a => ({ title: a.title, url: `/${a.category}/${a.slug}` }));
 
-  // Build Claude prompt
-  const systemPrompt = `You are writing for ${SITE_NAME} (${SITE_DOMAIN}). Author identity: ${AUTHOR_NAME} — ${AUTHOR_TITLE}. Write in Kalesh's voice: long, unfolding sentences that build and turn, average 18-28 words. 3-4 flowing sentences before dropping a short one. Intellectual warmth, contemplative, cross-traditional. References Buddhism, Taoism, Vedanta, and neuroscience equally. Uses em-dashes, triads, questions that open rather than close. 30% spiritual/healing threads woven into all content.`;
+  // Build Claude prompt with full humanization rules
+  const systemPrompt = `You are writing for ${SITE_NAME} (${SITE_DOMAIN}). Author identity: ${AUTHOR_NAME}, ${AUTHOR_TITLE}. Website: ${AUTHOR_URL}.
 
-  const userPrompt = `Write a 2,500-2,800 word article for the "${minCat.name}" section about caregiver burnout.
+VOICE RULES (follow exactly):
+- Long, unfolding sentences that build and turn (avg 18-28 words), then drop a short one like a stone
+- Pattern: Long -> Long -> Long (with internal comma rhythm) -> Short drop -> Long -> Short drop
+- 40% teaching + 30% tender + 20% philosophical + 10% fierce
+- Cross-traditional: references Buddhism, Taoism, Vedanta, and neuroscience equally
+- Uses "we" and "one" and "a person who" more than "you"
+- Builds analogies across 2-3 sentences before revealing the point
+- Ends sections with questions that open rather than close
+- Loves triads: "not the thought, not the thinker, but the space in which both appear"
+- Intellectual wit, unexpected metaphors
+- Use contractions naturally (don't, can't, won't, it's, that's, there's, you're, they're)
+
+ABSOLUTELY BANNED (zero tolerance):
+- ZERO em dashes or en dashes. Use commas, periods, colons, semicolons, or ellipses instead
+- ZERO of these words: ${BANNED_WORDS.join(', ')}
+- ZERO "This is where" as a sentence starter
+- ZERO generic H2 headers like "Understanding X" or "Moving Forward" or "The Path Ahead"`;
+
+  const userPrompt = `Write a 1200-1800 word article for the "${minCat.name}" section about caregiver burnout, emotional weight, or spiritual caregiving.
 
 REQUIREMENTS:
+- Word count: STRICTLY 1200-1800 words. No more, no less.
 - Opener type: ${openerType}
-- Include 1-2 first-person lived experience markers
-- Include at least 1 named researcher reference (Pauline Boss, Barry Jacobs, Christina Maslach, Gabor Maté, Bessel van der Kolk, Stephen Porges, Tara Brach, Alan Watts, etc.)
+- 4-6 H2 sections with UNIQUE, evocative headers (not generic)
+- 1 blockquote per article (from a voice phrase or researcher)
+- Include exactly 2 conversational interjections: "${interjections[0]}" and "${interjections[1]}"
+- Include 1-2 first-person lived experience markers ("In my years of working in this territory..." or "I have sat with people who...")
+- Cite these researchers naturally: ${selectedResearchers.join(', ')}
 - ${faqCount} FAQ Q&A pairs at the end (or none if 0)
 - Backlink type: ${backlinkType}
 ${backlinkType === 'kalesh' ? `- Include 1 link to ${AUTHOR_URL} with topically relevant anchor text` : ''}
 ${backlinkType === 'external' ? `- Include 1 external link with rel="nofollow" to one of: ${EXTERNAL_AUTHORITY_SITES.join(', ')}` : ''}
-- Include 3-5 internal cross-links using these: ${internalLinks.map(l => `<a href="${l.url}">${l.title}</a>`).join(', ')}
+${backlinkType === 'amazon' ? `- Include 2-3 soft Amazon product recommendations with tag=${AMAZON_TAG} (use real product names and ASINs)` : ''}
+- Include 2-3 internal cross-links using these: ${internalLinks.slice(0, 3).map(l => `<a href="${l.url}">${l.title}</a>`).join(', ')}
 - Weave in these Kalesh voice phrases naturally: ${selectedPhrases.map(p => `"${p}"`).join('; ')}
-- Zero "this is where" transitions
-- Zero generic phrases (manifest, lean into, authentic self, safe space, hold space, sacred container, raise your vibration)
-- All links as HTML <a href> tags, NOT markdown
-- Include a medical/mental health disclaimer at the end
-- Output as HTML (p, h2, blockquote, a tags only)
+- Aggressively vary sentence lengths. Mix 5-word sentences with 30-word sentences.
+- Include a health disclaimer at the end: "<p><em>This article is for informational purposes only and does not replace professional medical or mental health advice.</em></p>"
+- Output as HTML (p, h2, blockquote, a, strong, em tags only). No div, no classes, no styles.
 
 Return JSON: { "title": "...", "excerpt": "...", "body": "...", "faqs": [["Q","A"],...] }`;
 
@@ -165,10 +289,20 @@ Return JSON: { "title": "...", "excerpt": "...", "body": "...", "faqs": [["Q","A
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('No JSON in response');
     
-    const article = JSON.parse(jsonMatch[0]);
+    let article = JSON.parse(jsonMatch[0]);
+    
+    // Post-process: clean AI words and emdashes
+    article.body = cleanAIWords(article.body);
+    
     const slug = article.title.toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
+
+    // Verify word count
+    const wordCount = article.body.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(w => w).length;
+    if (wordCount < 1200 || wordCount > 1800) {
+      console.warn(`[generate] Word count ${wordCount} outside range. Proceeding anyway.`);
+    }
 
     // Generate image via FAL.ai
     const imagePrompt = `Painterly watercolor editorial illustration for '${article.title}': warm golden light, tender caregiving scene, luminous amber and cream tones. No text, no words, no watermarks.`;
@@ -225,7 +359,7 @@ Return JSON: { "title": "...", "excerpt": "...", "body": "...", "faqs": [["Q","A
       category: minCat.slug,
       categoryName: minCat.name,
       dateISO: new Date().toISOString(),
-      readingTime: Math.ceil(article.body.split(/\s+/).length / 250),
+      readingTime: Math.ceil(wordCount / 250),
       body: article.body,
       faqs: article.faqs || [],
       faqCount: faqCount,
@@ -235,12 +369,12 @@ Return JSON: { "title": "...", "excerpt": "...", "body": "...", "faqs": [["Q","A
       imagePrompt,
       heroImage,
       ogImage,
-      wordCount: article.body.split(/\s+/).length,
+      wordCount,
     };
 
     articles.push(newArticle);
     fs.writeFileSync(ARTICLES_PATH, JSON.stringify(articles, null, 2));
-    console.log(`[generate] Created: "${newArticle.title}" in ${minCat.name}`);
+    console.log(`[generate] Created: "${newArticle.title}" in ${minCat.name} (${wordCount} words)`);
 
     // Push to GitHub
     const { execSync } = await import('child_process');
