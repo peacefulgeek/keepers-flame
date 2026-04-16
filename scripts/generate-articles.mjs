@@ -297,13 +297,20 @@ Return JSON: { "title": "...", "excerpt": "...", "body": "...", "faqs": [["Q","A
     // Verify 3 Amazon links exist; inject fallbacks if LLM missed any
     const amazonCount = (article.body.match(/amazon\.com/g) || []).length;
     if (amazonCount < 3) {
+      // ALL ASINs verified from actual Amazon product page URLs in search results
       const fallbackProducts = [
         { name: 'The Body Keeps the Score by Bessel van der Kolk', asin: '0143127748', desc: 'a book that changed how many people understand trauma and the nervous system' },
-        { name: 'Burnout: The Secret to Unlocking the Stress Cycle by Emily Nagoski', asin: '0399592458', desc: 'a book that finally explains why rest alone does not fix burnout' },
+        { name: 'Burnout: The Secret to Unlocking the Stress Cycle by Emily Nagoski', asin: '1984818325', desc: 'a book that finally explains why rest alone does not fix burnout' },
         { name: 'Weighted Blanket by YnM', asin: 'B073429DV2', desc: 'a weighted blanket that helps the nervous system settle when sleep will not come' },
         { name: 'The 36-Hour Day by Nancy Mace', asin: '1421422239', desc: 'the most practical guide to dementia caregiving that exists' },
-        { name: 'Heating Pad by Mighty Bliss', asin: 'B07GQ4YDQG', desc: 'a heating pad for the back pain that comes from lifting, bending, and carrying' },
-        { name: 'Meditation Cushion by Florensi', asin: 'B07VB3YZRQ', desc: 'a meditation cushion for the five minutes of stillness that matter more than you think' },
+        { name: 'UTK Cordless Heating Pad', asin: 'B0F98J3TS7', desc: 'a heating pad for the back pain that comes from lifting, bending, and carrying' },
+        { name: 'MONAHITO Meditation Cushion', asin: 'B0BMFY81DF', desc: 'a meditation cushion for the five minutes of stillness that matter more than you think' },
+        { name: 'Dr Teal\'s Lavender Epsom Salt Soak', asin: 'B07NF79DKC', desc: 'an epsom salt soak that turns a bath into the closest thing to therapy you can get at home' },
+        { name: 'Gaiam Yoga Mat Premium 6mm', asin: 'B07NHSFZSB', desc: 'a yoga mat for the stretching your body has been asking for' },
+        { name: 'Ring Indoor Cam 1080p HD', asin: 'B0B6GJBKRK', desc: 'a camera that lets you check in on your loved one without driving across town' },
+        { name: 'Stanley Quencher H2.0 Tumbler 40oz', asin: 'B0DCDS4D5L', desc: 'a tumbler that keeps your water cold all day because dehydration makes everything worse' },
+        { name: 'Radical Acceptance by Tara Brach', asin: '0553380990', desc: 'a book that teaches you how to stop fighting what is and start working with it' },
+        { name: 'Man\'s Search for Meaning by Viktor Frankl', asin: '0807014273', desc: 'a book about finding purpose in suffering that hits different when you are a caregiver' },
       ];
       const templates = [
         'One resource I often point people toward is',
