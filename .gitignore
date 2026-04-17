@@ -21,3 +21,4 @@ generate-images.py
 image-prompts.json
 map-inputs.json
 src/data/image-prompts.json
+fonts-tmp/

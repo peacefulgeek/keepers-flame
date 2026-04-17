@@ -4,37 +4,54 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const AUTO_GEN_ENABLED = process.env.AUTO_GEN_ENABLED === 'true';
 
-// Mon-Fri 12:00 UTC (6AM MDT)
-cron.schedule('0 12 * * 1-5', () => {
-  console.log(`[cron] Triggering article generation at ${new Date().toISOString()}`);
+function runScript(name, timeoutMs = 600000) {
+  const script = path.resolve(__dirname, name);
   try {
-    execSync(`node ${path.resolve(__dirname, 'generate-articles.mjs')}`, {
-      timeout: 600000, // 600s timeout
-      stdio: 'inherit',
-    });
-    console.log('[cron] Article generation complete.');
+    execSync(`node ${script}`, { timeout: timeoutMs, stdio: 'inherit' });
+    console.log(`[cron] ${name} complete.`);
   } catch (err) {
-    console.error('[cron] Article generation failed:', err.message);
+    console.error(`[cron] ${name} failed:`, err.message);
   }
-}, {
-  timezone: 'UTC',
-});
+}
 
-// Sunday 03:00 UTC — weekly product link refresh
-cron.schedule('0 3 * * 0', () => {
-  console.log(`[cron] Triggering product refresh at ${new Date().toISOString()}`);
-  try {
-    execSync(`node ${path.resolve(__dirname, 'refresh-products.mjs')}`, {
-      timeout: 900000, // 15 min timeout (checking 74+ ASINs with rate limiting)
-      stdio: 'inherit',
-    });
-    console.log('[cron] Product refresh complete.');
-  } catch (err) {
-    console.error('[cron] Product refresh failed:', err.message);
-  }
-}, {
-  timezone: 'UTC',
-});
+// Cron #1: Mon-Fri 06:00 UTC — Article generation (5/week)
+cron.schedule('0 6 * * 1-5', () => {
+  if (!AUTO_GEN_ENABLED) { console.log('[cron] AUTO_GEN_ENABLED=false, skipping article gen'); return; }
+  console.log(`[cron] Article generation at ${new Date().toISOString()}`);
+  runScript('generate-articles.mjs', 600000);
+}, { timezone: 'UTC' });
 
-console.log('[cron] Cron worker started. Schedules: Mon-Fri 12:00 UTC (articles), Sun 03:00 UTC (product refresh).');
+// Cron #2: Saturday 08:00 UTC — Product spotlight (1/week)
+cron.schedule('0 8 * * 6', () => {
+  if (!AUTO_GEN_ENABLED) { console.log('[cron] AUTO_GEN_ENABLED=false, skipping spotlight'); return; }
+  console.log(`[cron] Product spotlight at ${new Date().toISOString()}`);
+  runScript('product-spotlight.mjs', 600000);
+}, { timezone: 'UTC' });
+
+// Cron #3: 1st of month 03:00 UTC — Monthly content refresh
+cron.schedule('0 3 1 * *', () => {
+  console.log(`[cron] Monthly content refresh at ${new Date().toISOString()}`);
+  runScript('refresh-monthly.mjs', 1800000);
+}, { timezone: 'UTC' });
+
+// Cron #4: Jan/Apr/Jul/Oct 1st 04:00 UTC — Quarterly content refresh
+cron.schedule('0 4 1 1,4,7,10 *', () => {
+  console.log(`[cron] Quarterly content refresh at ${new Date().toISOString()}`);
+  runScript('refresh-quarterly.mjs', 3600000);
+}, { timezone: 'UTC' });
+
+// Cron #5: Sunday 05:00 UTC — ASIN health check + product link refresh
+cron.schedule('0 5 * * 0', () => {
+  console.log(`[cron] ASIN health check at ${new Date().toISOString()}`);
+  runScript('refresh-products.mjs', 900000);
+}, { timezone: 'UTC' });
+
+console.log(`[cron] Cron worker started. AUTO_GEN_ENABLED=${AUTO_GEN_ENABLED}`);
+console.log('[cron] Schedules:');
+console.log('  #1 Mon-Fri 06:00 UTC — Article generation');
+console.log('  #2 Saturday 08:00 UTC — Product spotlight');
+console.log('  #3 1st of month 03:00 UTC — Monthly refresh');
+console.log('  #4 Jan/Apr/Jul/Oct 1st 04:00 UTC — Quarterly refresh');
+console.log('  #5 Sunday 05:00 UTC — ASIN health check');

@@ -27,6 +27,11 @@ async function createServer() {
     next();
   });
 
+  // Health check endpoint for Render
+  app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
+
   // Load articles data
   const articlesPath = path.resolve(root, 'src/data/articles.json');
   const articles = JSON.parse(fs.readFileSync(articlesPath, 'utf-8'));

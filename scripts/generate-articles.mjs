@@ -1,5 +1,5 @@
 // ─── FEATURE FLAG (stays in code — not a secret) ───
-const AUTO_GEN_ENABLED = false; // Wildman flips to true on GitHub when ready
+const AUTO_GEN_ENABLED = process.env.AUTO_GEN_ENABLED === 'true';
 
 // ─── FROM RENDER ENV VARS (auto-revoked if found in code) ───
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -99,16 +99,32 @@ const RESEARCHERS = [
 ];
 
 const BANNED_WORDS = [
-  "profound", "profoundly", "transformative", "holistic", "nuanced", "multifaceted",
-  "delve", "delving", "tapestry", "landscape", "paradigm", "synergy",
-  "leverage", "leveraging", "robust", "utilize", "utilizing", "facilitate",
-  "facilitating", "innovative", "streamline", "streamlining", "optimize",
-  "optimizing", "pivotal", "realm", "embark", "embarking", "foster", "fostering",
-  "moreover", "furthermore", "additionally", "consequently", "subsequently",
-  "needless to say", "in conclusion", "it is important to note", "it is worth noting",
-  "manifest", "manifesting", "manifestation", "lean into", "leaning into",
-  "showing up for", "show up for", "authentic self", "safe space", "hold space",
-  "holding space", "sacred container", "raise your vibration",
+  // Classic AI tells
+  'delve','delving','tapestry','paradigm','synergy','leverage','leveraging','unlock','empower',
+  'utilize','utilizing','pivotal','embark','embarking','underscore','paramount','seamlessly',
+  'robust','beacon','foster','fostering','elevate','curate','curated','bespoke',
+  'resonate','harness','intricate','plethora','myriad','comprehensive',
+  // Marketing fluff
+  'transformative','groundbreaking','innovative','cutting-edge','revolutionary',
+  'state-of-the-art','ever-evolving','game-changing','next-level','world-class',
+  'unparalleled','unprecedented','remarkable','extraordinary','exceptional',
+  // Abstract filler
+  'profound','profoundly','holistic','nuanced','multifaceted','stakeholders',
+  'ecosystem','landscape','realm','sphere','domain',
+  // AI hedging
+  'arguably','notably','crucially','importantly','essentially',
+  'fundamentally','inherently','intrinsically','substantively',
+  // Bullshit verbs
+  'streamline','streamlining','optimize','optimizing','facilitate','facilitating',
+  'amplify','catalyze','propel','spearhead','orchestrate','navigate','traverse',
+  // AI connectors
+  'furthermore','moreover','additionally','consequently','subsequently',
+  'thereby','thusly','wherein','whereby',
+  // Banned phrases
+  'manifest','manifesting','manifestation','lean into','leaning into',
+  'showing up for','show up for','authentic self','safe space','hold space',
+  'holding space','sacred container','raise your vibration',
+  'needless to say','in conclusion','it is important to note','it is worth noting',
 ];
 
 // Post-process to remove any AI words that slip through
@@ -128,6 +144,24 @@ function cleanAIWords(text) {
     'foster': 'build', 'fostering': 'building',
     'moreover': 'And', 'furthermore': 'And',
     'additionally': 'Also', 'consequently': 'So', 'subsequently': 'Then',
+    // New expanded list
+    'unlock': 'open', 'empower': 'strengthen', 'underscore': 'highlight',
+    'paramount': 'critical', 'seamlessly': 'smoothly', 'beacon': 'light',
+    'elevate': 'lift', 'curate': 'choose', 'curated': 'chosen', 'bespoke': 'custom',
+    'resonate': 'connect', 'harness': 'use', 'intricate': 'complex',
+    'plethora': 'many', 'myriad': 'many', 'comprehensive': 'complete',
+    'groundbreaking': 'new', 'cutting-edge': 'modern', 'revolutionary': 'new',
+    'game-changing': 'important', 'next-level': 'better', 'world-class': 'excellent',
+    'unparalleled': 'rare', 'unprecedented': 'unusual', 'remarkable': 'notable',
+    'extraordinary': 'unusual', 'exceptional': 'rare',
+    'stakeholders': 'people involved', 'ecosystem': 'system', 'sphere': 'area', 'domain': 'area',
+    'arguably': 'perhaps', 'notably': 'especially', 'crucially': 'critically',
+    'importantly': 'more to the point', 'essentially': 'really',
+    'fundamentally': 'at the core', 'inherently': 'naturally', 'intrinsically': 'naturally',
+    'substantively': 'meaningfully',
+    'amplify': 'increase', 'catalyze': 'trigger', 'propel': 'push',
+    'spearhead': 'lead', 'orchestrate': 'arrange', 'navigate': 'move through', 'traverse': 'cross',
+    'thereby': 'and so', 'thusly': 'so', 'wherein': 'where', 'whereby': 'through which',
   };
   
   for (const [word, replacement] of Object.entries(replacements)) {
@@ -238,7 +272,19 @@ ABSOLUTELY BANNED (zero tolerance):
 - ZERO em dashes or en dashes. Use commas, periods, colons, semicolons, or ellipses instead
 - ZERO of these words: ${BANNED_WORDS.join(', ')}
 - ZERO "This is where" as a sentence starter
-- ZERO generic H2 headers like "Understanding X" or "Moving Forward" or "The Path Ahead"`;
+- ZERO generic H2 headers like "Understanding X" or "Moving Forward" or "The Path Ahead"
+
+HARD RULES for this article:
+- 1,600 to 2,000 words (strict)
+- Zero em-dashes. Use commas, periods, colons, or parentheses instead.
+- Never use these phrases: "it's important to note," "in conclusion," "in summary," "in the realm of," "dive deep into," "at the end of the day," "in today's fast-paced world," "plays a crucial role," "a testament to," "when it comes to," "cannot be overstated," "it goes without saying," "last but not least," "first and foremost."
+- Contractions throughout. You're. Don't. It's. That's. I've. We'll.
+- Vary sentence length aggressively. Some fragments. Some long ones that stretch across a full breath. Some just three words.
+- Direct address ("you") throughout OR first-person ("I / my") throughout. Pick one.
+- Include at least 2 conversational openers somewhere in the piece: "Here's the thing," "Honestly," "Look," "Truth is," "But here's what's interesting," "Think about it," "That said."
+- Concrete specifics over abstractions. A name. A number. A moment.
+- 3 Amazon product links embedded naturally in prose, each followed by "(paid link)" in plain text. Use only ASINs from the provided catalog.
+- No em-dashes. No em-dashes. No em-dashes.`;
 
   const userPrompt = `Write a 1200-1800 word article for the "${minCat.name}" section about caregiver burnout, emotional weight, or spiritual caregiving.
 
