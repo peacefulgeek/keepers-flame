@@ -10,6 +10,17 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 async function createServer() {
   const app = express();
+
+  // 301 redirect www → non-www (before anything else)
+  app.use((req, res, next) => {
+    const host = req.hostname || req.headers.host || '';
+    if (host.startsWith('www.')) {
+      const bare = host.replace(/^www\./, '');
+      return res.redirect(301, `https://${bare}${req.originalUrl}`);
+    }
+    next();
+  });
+
   app.use(compression());
 
   // Security headers
