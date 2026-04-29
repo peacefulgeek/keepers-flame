@@ -122,4 +122,44 @@ export const products: Product[] = [
   // ═══════════════════════════════════════════
   { name: 'Adult Coloring Book for Stress Relief', asin: 'B0CZ3WGMMS', category: 'creative', tags: ['relaxation', 'creative', 'stress', 'self-care'], sentence: 'For something that occupies your hands while your mind rests, one option is an' },
   { name: 'Nature and Floral Escapes Coloring Book', asin: 'B0GDTX8PN2', category: 'creative', tags: ['relaxation', 'creative', 'nature', 'self-care'], sentence: 'For a creative escape that requires nothing but colored pencils, try the' },
+
+  // ═══════════════════════════════════════════
+  // ADDITIONAL BOOKS — Verified Apr 2026
+  // ═══════════════════════════════════════════
+  { name: 'Devoted A Caregivers Handbook and Guide', asin: 'B0CVG3B4BX', category: 'books', tags: ['caregiving', 'practical', 'family', 'guide'], sentence: 'A handbook that walks you through the real decisions of caregiving is' },
+  { name: 'Caregiver Daily Log Book', asin: 'B0CZL68NV6', category: 'books', tags: ['caregiving', 'practical', 'daily', 'tracking'], sentence: 'For keeping track of medications, meals, and vitals in one place, try the' },
+  { name: 'Caregiver Daily Log Personal Care Journal', asin: 'B09T367GLX', category: 'journals', tags: ['caregiving', 'journal', 'daily', 'practical'], sentence: 'A simple daily log that keeps everything organized is the' },
+
+  // ═══════════════════════════════════════════
+  // ADDITIONAL PRACTICAL — Verified Apr 2026
+  // ═══════════════════════════════════════════
+  { name: 'Drive Medical Shower Chair for Inside Tub', asin: 'B005JIMQL4', category: 'practical', tags: ['bathing', 'safety', 'mobility', 'practical'], sentence: 'A reliable shower chair that many families trust is the' },
+  { name: 'Drive Medical Shower Chair with Back', asin: 'B002VWK0WI', category: 'practical', tags: ['bathing', 'safety', 'mobility', 'practical'], sentence: 'For shower safety with back support, a solid choice is the' },
+  { name: 'XL Weekly Pill Organizer 4 Times a Day', asin: 'B08B5TT1TW', category: 'practical', tags: ['medication', 'organization', 'daily', 'practical'], sentence: 'For managing multiple daily medications, something that helps is the' },
+  { name: 'Sukuos AM PM Weekly Pill Organizer', asin: 'B07MF6KSDM', category: 'practical', tags: ['medication', 'organization', 'daily', 'practical'], sentence: 'A simple twice-daily pill organizer that actually works is the' },
+  { name: 'Fullicon Weekly Pill Dispenser 14 Compartments', asin: 'B09MFLR8MJ', category: 'practical', tags: ['medication', 'organization', 'weekly', 'practical'], sentence: 'For a full week of medication management, one option is the' },
+  { name: 'Bed Rails for Elderly Adults Safety', asin: 'B0BX42MZJ7', category: 'practical', tags: ['safety', 'mobility', 'bedroom', 'practical'], sentence: 'For preventing falls and helping with getting in and out of bed, try the' },
+  { name: 'BigDolphin Bed Assist Rail for Elderly', asin: 'B0FJ1VR34G', category: 'practical', tags: ['safety', 'mobility', 'bedroom', 'practical'], sentence: 'A sturdy bed rail that makes nighttime safer is the' },
+  { name: 'Toilet Grab Bar Bathroom Safety Handrail', asin: 'B0G25VR5Z1', category: 'practical', tags: ['safety', 'bathroom', 'mobility', 'practical'], sentence: 'For bathroom safety that preserves independence, a practical choice is a' },
+
+  // ═══════════════════════════════════════════
+  // ADDITIONAL SELF-CARE — Verified Apr 2026
+  // ═══════════════════════════════════════════
+  { name: 'Yogi Tea Stress Relief Variety Sampler', asin: 'B0735W1XZP', category: 'self-care', tags: ['tea', 'relaxation', 'stress', 'self-care'], sentence: 'For a cup of something warm that actually helps you wind down, try the' },
+  { name: 'Republic of Tea Be Well Trio Sampler', asin: 'B00CJ0G8F0', category: 'self-care', tags: ['tea', 'wellness', 'relaxation', 'self-care'], sentence: 'A tea sampler designed for wellness and relaxation is the' },
+  { name: 'Sippingly Night Time Tea Sampler', asin: 'B07K7VYQGC', category: 'self-care', tags: ['tea', 'sleep', 'relaxation', 'self-care'], sentence: 'For a bedtime ritual that signals your body it is time to rest, try the' },
+  { name: 'Wemore Weighted Lap Blanket 7lbs', asin: 'B0C6KPBVKG', category: 'self-care', tags: ['comfort', 'anxiety', 'weight', 'self-care'], sentence: 'A smaller weighted blanket that works anywhere you sit is the' },
+  { name: 'Deepsoon Electric Heating Pad Large', asin: 'B0D1QFZB5Q', category: 'self-care', tags: ['pain', 'body', 'physical', 'practical'], sentence: 'For the back pain that comes with caregiving, a heating pad that covers more area is the' },
+  { name: 'Electric Heating Pad for Back Pain', asin: 'B08P44SCTF', category: 'self-care', tags: ['pain', 'body', 'physical', 'practical'], sentence: 'A simple heating pad that does what it needs to do is the' },
+  { name: 'Soundcore Sleep A20 Noise Blocking Earbuds', asin: 'B0CRGR2TS5', category: 'self-care', tags: ['sleep', 'noise', 'quiet', 'self-care'], sentence: 'For blocking out noise when you desperately need sleep, something worth trying is the' },
+  { name: 'Momcozy U Shaped Full Body Pillow', asin: 'B08YYVRXLM', category: 'comfort', tags: ['sleep', 'comfort', 'body', 'self-care'], sentence: 'For full body support when sleep has become a struggle, one option is the' },
+  { name: 'ALLOPERA Full Body Maternity Pillow', asin: 'B0CN9522GD', category: 'comfort', tags: ['sleep', 'comfort', 'body', 'self-care'], sentence: 'A body pillow that supports every aching part of you is the' },
+
+  // ═══════════════════════════════════════════
+  // ADDITIONAL MEDITATION — Verified Apr 2026
+  // ═══════════════════════════════════════════
+  { name: 'Electronic Tibetan Singing Bowl for Meditation', asin: 'B0CD1S3FQ5', category: 'meditation', tags: ['meditation', 'sacred', 'sound', 'ritual'], sentence: 'For an effortless way to bring singing bowl sounds into your practice, try the' },
+  { name: 'Portable Electronic Singing Bowl 8 Chakra Modes', asin: 'B0GLYG9H35', category: 'meditation', tags: ['meditation', 'sacred', 'sound', 'chakra'], sentence: 'A portable singing bowl with multiple modes for different practices is the' },
+  { name: 'Tibetan Meditation Singing Bowl Machine with Timer', asin: 'B0CTJG8NYG', category: 'meditation', tags: ['meditation', 'sacred', 'sound', 'timer'], sentence: 'For timed meditation sessions with authentic bowl sounds, one option is the' },
+  { name: 'Weighted Lap Blanket for Meditation', asin: 'B0DJ78XSNH', category: 'meditation', tags: ['meditation', 'comfort', 'weight', 'self-care'], sentence: 'For grounding yourself during meditation, a weighted lap pad helps:' },
 ];

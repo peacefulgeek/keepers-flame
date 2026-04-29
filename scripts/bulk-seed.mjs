@@ -5,7 +5,9 @@
 // Quality gate enforced on every article
 // ═══════════════════════════════════════════════════════════════
 
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'sk-82bdad0a1fd34987b73030504ae67080';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || 'sk-82bdad0a1fd34987b73030504ae67080';
+const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || 'https://api.deepseek.com';
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'deepseek-v4-pro';
 const AMAZON_TAG = 'spankyspinola-20';
 
 import fs from 'fs';
@@ -140,6 +142,19 @@ const FALLBACK_PRODUCTS = [
   { name: 'Stanley Quencher H2.0 Tumbler 40oz', asin: 'B0DCDS4D5L' },
   { name: 'Radical Acceptance by Tara Brach', asin: '0553380990' },
   { name: "Man's Search for Meaning by Viktor Frankl", asin: '0807014273' },
+  { name: 'Drive Medical Shower Chair', asin: 'B005JIMQL4' },
+  { name: 'Bed Rails for Elderly Adults Safety', asin: 'B0BX42MZJ7' },
+  { name: 'XL Weekly Pill Organizer 4 Times a Day', asin: 'B08B5TT1TW' },
+  { name: 'Yogi Tea Stress Relief Variety Sampler', asin: 'B0735W1XZP' },
+  { name: 'Soundcore Sleep A20 Noise Blocking Earbuds', asin: 'B0CRGR2TS5' },
+  { name: 'Deepsoon Electric Heating Pad Large', asin: 'B0D1QFZB5Q' },
+  { name: 'Wemore Weighted Lap Blanket 7lbs', asin: 'B0C6KPBVKG' },
+  { name: 'Electronic Tibetan Singing Bowl', asin: 'B0CD1S3FQ5' },
+  { name: 'Toilet Grab Bar Bathroom Safety', asin: 'B0G25VR5Z1' },
+  { name: 'Momcozy U Shaped Full Body Pillow', asin: 'B08YYVRXLM' },
+  { name: 'Set Boundaries Find Peace by Nedra Tawwab', asin: '0593192095' },
+  { name: 'The Five Minute Journal', asin: '0991846206' },
+  { name: 'Caregiver Daily Log Book', asin: 'B0CZL68NV6' },
 ];
 
 // ─── TOPIC BANKS (500 unique topics across 5 categories) ───
@@ -774,14 +789,14 @@ async function generateOneArticle(articles, topic, category) {
     .slice(0, 5)
     .map(a => ({ title: a.title, url: `/${a.category}/${a.slug}` }));
 
-  const response = await fetch('https://api.deepseek.com/chat/completions', {
+  const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+      'Authorization': `Bearer ${OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: 'deepseek-v4-pro',
+      model: OPENAI_MODEL,
       messages: [
         { role: 'system', content: `You write for ${SITE_NAME}. Author: ${AUTHOR_NAME}, ${AUTHOR_TITLE}. Voice: warm, conversational, honest, cross-traditional. ZERO em-dashes. ZERO of these words: ${AI_WORDS.join(', ')}. Use contractions. Vary sentence lengths aggressively.` },
         { role: 'user', content: `Write a 1400-1800 word article titled "${topic}" for the "${category.name}" section.

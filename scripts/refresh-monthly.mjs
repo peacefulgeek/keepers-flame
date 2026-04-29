@@ -1,5 +1,7 @@
 // ─── MONTHLY CONTENT REFRESH ─── DeepSeek V4-Pro ───
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || 'https://api.deepseek.com';
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'deepseek-v4-pro';
 const GH_PAT = process.env.GH_PAT;
 const AUTO_GEN_ENABLED = process.env.AUTO_GEN_ENABLED === 'true';
 const AMAZON_TAG = 'spankyspinola-20';
@@ -67,7 +69,7 @@ function passesGate(body) {
 
 async function refreshMonthly() {
   if (!AUTO_GEN_ENABLED) { console.log('[refresh-monthly] Disabled.'); process.exit(0); }
-  if (!DEEPSEEK_API_KEY) { console.error('[refresh-monthly] Missing DEEPSEEK_API_KEY.'); process.exit(1); }
+  if (!OPENAI_API_KEY) { console.error('[refresh-monthly] Missing OPENAI_API_KEY.'); process.exit(1); }
 
   const articles = JSON.parse(fs.readFileSync(ARTICLES_PATH, 'utf-8'));
   const now = new Date();
@@ -89,14 +91,14 @@ async function refreshMonthly() {
 
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        const response = await fetch('https://api.deepseek.com/chat/completions', {
+        const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
           },
           body: JSON.stringify({
-            model: 'deepseek-v4-pro',
+            model: OPENAI_MODEL,
             messages: [
               { role: 'system', content: `You refresh articles for The Keeper's Flame. Author: Kalesh. Voice: warm, conversational, honest. ZERO em-dashes. ZERO of these words: ${AI_WORDS.join(', ')}. Use contractions. Vary sentence lengths aggressively.` },
               { role: 'user', content: `Refresh and improve this article. Keep the same topic and title "${article.title}" but rewrite for freshness. Keep all Amazon product links (tag=${AMAZON_TAG}).

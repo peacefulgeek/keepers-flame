@@ -1,5 +1,7 @@
 // ─── PRODUCT SPOTLIGHT (Weekly) ─── DeepSeek V4-Pro + Bunny Library ───
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || 'https://api.deepseek.com';
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'deepseek-v4-pro';
 const GH_PAT = process.env.GH_PAT;
 const AUTO_GEN_ENABLED = process.env.AUTO_GEN_ENABLED === 'true';
 
@@ -113,21 +115,21 @@ async function assignLibraryImage(slug) {
 
 async function main() {
   if (!AUTO_GEN_ENABLED) { console.log('[spotlight] Disabled. Exiting.'); process.exit(0); }
-  if (!DEEPSEEK_API_KEY) { console.error('[spotlight] Missing DEEPSEEK_API_KEY.'); process.exit(1); }
+  if (!OPENAI_API_KEY) { console.error('[spotlight] Missing OPENAI_API_KEY.'); process.exit(1); }
 
   const articles = JSON.parse(fs.readFileSync(ARTICLES_PATH, 'utf-8'));
   const weekNum = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
   const template = SPOTLIGHT_TEMPLATES[weekNum % SPOTLIGHT_TEMPLATES.length];
   const theme = THEMES[weekNum % THEMES.length];
 
-  const response = await fetch('https://api.deepseek.com/chat/completions', {
+  const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+      'Authorization': `Bearer ${OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: 'deepseek-v4-pro',
+      model: OPENAI_MODEL,
       messages: [
         { role: 'system', content: `You write product spotlight articles for ${SITE_NAME}. Author: ${AUTHOR_NAME}, Consciousness Teacher & Writer. Voice: warm, conversational, honest. ZERO em-dashes. ZERO of these words: ${BANNED_WORDS.join(', ')}. Use contractions. Vary sentence lengths aggressively. Short fragments mixed with long flowing sentences.` },
         { role: 'user', content: `Write a 1400-1800 word product spotlight article themed "${template.theme}: ${theme}" for caregivers.

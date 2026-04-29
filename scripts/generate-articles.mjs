@@ -1,8 +1,10 @@
 // ─── FEATURE FLAG ───
 const AUTO_GEN_ENABLED = process.env.AUTO_GEN_ENABLED === 'true';
 
-// ─── DEEPSEEK V4-PRO (replaces Anthropic + GPT) ───
-const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+// ─── DEEPSEEK V4-PRO via OpenAI-compatible env vars ───
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_BASE_URL = process.env.OPENAI_BASE_URL || 'https://api.deepseek.com';
+const OPENAI_MODEL = process.env.OPENAI_MODEL || 'deepseek-v4-pro';
 const GH_PAT = process.env.GH_PAT;
 
 // ─── HARDCODED (Bunny is safe in code) ───
@@ -144,6 +146,19 @@ const FALLBACK_PRODUCTS = [
   { name: 'Stanley Quencher H2.0 Tumbler 40oz', asin: 'B0DCDS4D5L' },
   { name: 'Radical Acceptance by Tara Brach', asin: '0553380990' },
   { name: "Man's Search for Meaning by Viktor Frankl", asin: '0807014273' },
+  { name: 'Drive Medical Shower Chair', asin: 'B005JIMQL4' },
+  { name: 'Bed Rails for Elderly Adults Safety', asin: 'B0BX42MZJ7' },
+  { name: 'XL Weekly Pill Organizer 4 Times a Day', asin: 'B08B5TT1TW' },
+  { name: 'Yogi Tea Stress Relief Variety Sampler', asin: 'B0735W1XZP' },
+  { name: 'Soundcore Sleep A20 Noise Blocking Earbuds', asin: 'B0CRGR2TS5' },
+  { name: 'Deepsoon Electric Heating Pad Large', asin: 'B0D1QFZB5Q' },
+  { name: 'Wemore Weighted Lap Blanket 7lbs', asin: 'B0C6KPBVKG' },
+  { name: 'Electronic Tibetan Singing Bowl', asin: 'B0CD1S3FQ5' },
+  { name: 'Toilet Grab Bar Bathroom Safety', asin: 'B0G25VR5Z1' },
+  { name: 'Momcozy U Shaped Full Body Pillow', asin: 'B08YYVRXLM' },
+  { name: 'Set Boundaries Find Peace by Nedra Tawwab', asin: '0593192095' },
+  { name: 'The Five Minute Journal', asin: '0991846206' },
+  { name: 'Caregiver Daily Log Book', asin: 'B0CZL68NV6' },
 ];
 
 function cleanAIWords(text) {
@@ -354,14 +369,14 @@ ${backlinkType === 'external' ? `- Also include 1 external link with rel="nofoll
 Return JSON: { "title": "...", "excerpt": "...", "body": "...", "faqs": [["Q","A"],...] }`;
 
   // ─── CALL DEEPSEEK V4-PRO ───
-  const response = await fetch('https://api.deepseek.com/chat/completions', {
+  const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+      'Authorization': `Bearer ${OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: 'deepseek-v4-pro',
+      model: OPENAI_MODEL,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
@@ -461,8 +476,8 @@ async function main() {
     process.exit(0);
   }
 
-  if (!DEEPSEEK_API_KEY || !GH_PAT) {
-    console.error('[generate] Missing DEEPSEEK_API_KEY or GH_PAT. Exiting.');
+  if (!OPENAI_API_KEY || !GH_PAT) {
+    console.error('[generate] Missing OPENAI_API_KEY or GH_PAT. Exiting.');
     process.exit(1);
   }
 
