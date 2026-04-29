@@ -75,11 +75,11 @@ async function refreshQuarterly() {
 
   const candidates = articles
     .filter(a => {
-      const pubDate = new Date(a.dateISO);
+      const pubDate = new Date(a.publishDate);
       const lastQ = a.lastQuarterlyRefresh ? new Date(a.lastQuarterlyRefresh) : new Date(0);
       return pubDate < ninetyDaysAgo && lastQ < ninetyDaysAgo;
     })
-    .sort((a, b) => new Date(a.dateISO) - new Date(b.dateISO))
+    .sort((a, b) => new Date(a.publishDate) - new Date(b.publishDate))
     .slice(0, 20);
 
   if (candidates.length === 0) {

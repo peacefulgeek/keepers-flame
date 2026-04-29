@@ -22,7 +22,7 @@ export function ArticleCard({ article, size = 'small' }: Props) {
         <div>
           <span className="card-category">{article.categoryName}</span>
           <h3 style={{ fontSize: '0.95rem', margin: '0.2rem 0', fontFamily: 'var(--font-headline)' }}>{article.title}</h3>
-          <span style={{ fontSize: '0.75rem', color: '#6B4C3B' }}>{formatDate(article.dateISO)} &middot; {article.readingTime} min</span>
+          <span style={{ fontSize: '0.75rem', color: '#6B4C3B' }}>{formatDate(article.publishDate)} &middot; {article.readingTime}</span>
         </div>
       </Link>
     );

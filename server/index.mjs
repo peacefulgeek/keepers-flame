@@ -55,8 +55,8 @@ async function createServer() {
   ];
 
   function getPublished() {
-    const now = new Date();
-    return articles.filter(a => new Date(a.dateISO) <= now);
+    return articles.filter(a => a.status === 'published' && a.publishDate)
+      .sort((a, b) => (b.publishDate || '').localeCompare(a.publishDate || ''));
   }
 
   // === API: Subscribe (Bunny CDN JSONL) ===
@@ -198,7 +198,7 @@ Website: https://keepersflame.love
         title: a.title,
         url: `https://keepersflame.love/${a.category}/${a.slug}`,
         category: a.categoryName,
-        date: a.dateISO,
+        date: a.publishDate || '',
         excerpt: a.excerpt,
       })),
     });
@@ -280,7 +280,7 @@ ${published.map(a => `  <url>
       <title>${a.title.replace(/&/g, '&amp;')}</title>
       <link>https://keepersflame.love/${a.category}/${a.slug}</link>
       <description>${a.excerpt.replace(/&/g, '&amp;')}</description>
-      <pubDate>${new Date(a.dateISO).toUTCString()}</pubDate>
+      <pubDate>${a.publishDate ? new Date(a.publishDate + 'T12:00:00Z').toUTCString() : new Date().toUTCString()}</pubDate>
       <guid>https://keepersflame.love/${a.category}/${a.slug}</guid>
     </item>`).join('\n    ')}
   </channel>
@@ -503,7 +503,7 @@ Allow: /
       const urlParts = url.split('/').filter(Boolean);
       let article = null;
       if (urlParts.length === 2) {
-        article = articles.find(a => a.category === urlParts[0] && a.slug === urlParts[1]);
+        article = articles.find(a => a.category === urlParts[0] && a.slug === urlParts[1] && a.status === 'published');
       }
 
       // Build head tags
@@ -527,7 +527,7 @@ Allow: /
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="${siteName}" />
     <meta property="article:author" content="${siteName} Editorial" />
-    <meta property="article:published_time" content="${article.dateISO}" />
+    <meta property="article:published_time" content="${article.publishDate || ''}" />
     <meta property="article:section" content="${article.categoryName}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${article.title}" />
@@ -539,7 +539,7 @@ Allow: /
       "headline": article.title,
       "description": article.excerpt,
       "image": article.heroImage,
-      "datePublished": article.dateISO,
+      "datePublished": article.publishDate || '',
       "author": { "@type": "Person", "name": "Kalesh" },
       "publisher": { "@type": "Organization", "name": siteName, "url": siteUrl },
       "mainEntityOfPage": `${siteUrl}/${article.category}/${article.slug}`,

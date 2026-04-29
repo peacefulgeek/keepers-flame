@@ -74,8 +74,8 @@ async function refreshMonthly() {
   const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
 
   const candidates = articles
-    .filter(a => new Date(a.dateISO) < thirtyDaysAgo)
-    .sort((a, b) => new Date(a.dateISO) - new Date(b.dateISO))
+    .filter(a => new Date(a.publishDate) < thirtyDaysAgo)
+    .sort((a, b) => new Date(a.publishDate) - new Date(b.publishDate))
     .slice(0, 10);
 
   if (candidates.length === 0) {

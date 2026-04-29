@@ -58,7 +58,7 @@ export function ArticlePage() {
           <h1>{article.title}</h1>
           <div className="article-meta">
             <Link to={`/${article.category}`} className="category-badge">{article.categoryName}</Link>
-            <span>{formatDate(article.dateISO)}</span>
+            <span>{formatDate(article.publishDate)}</span>
             <span>{article.readingTime} min read</span>
           </div>
 
