@@ -1,9 +1,8 @@
-// ─── FEATURE FLAG (stays in code — not a secret) ───
+// ─── FEATURE FLAG ───
 const AUTO_GEN_ENABLED = process.env.AUTO_GEN_ENABLED === 'true';
 
-// ─── FROM RENDER ENV VARS (auto-revoked if found in code) ───
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const FAL_KEY = process.env.FAL_API_KEY;
+// ─── DEEPSEEK V4-PRO (replaces Anthropic + GPT) ───
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 const GH_PAT = process.env.GH_PAT;
 
 // ─── HARDCODED (Bunny is safe in code) ───
@@ -26,6 +25,24 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const ARTICLES_PATH = path.resolve(ROOT, 'src/data/articles.json');
+
+// ─── 40-IMAGE BUNNY LIBRARY (replaces Fal.ai) ───
+const LIBRARY_IMAGES = Array.from({ length: 40 }, (_, i) => {
+  const num = String(i + 1).padStart(2, '0');
+  const names = [
+    'hands-holding-candle','empty-chair-by-window','two-cups-of-tea','woman-looking-at-horizon',
+    'hands-on-journal','walking-path-through-trees','sleeping-figure-on-couch','hand-reaching-for-hand',
+    'kitchen-morning-light','person-sitting-on-porch','stacked-books-nightstand','rain-on-window-reflection',
+    'garden-hands-in-soil','bridge-over-still-water','wheelchair-beside-window','tangled-yarn',
+    'sunrise-through-curtains','old-photo-album','person-in-bathtub','two-shadows-walking',
+    'cracked-pottery-gold','lighthouse-in-fog','hands-folding-laundry','tree-roots-exposed',
+    'mirror-reflection','staircase-light','wilted-flowers-vase','person-at-desk-night',
+    'open-door-sunlight','hands-braiding-hair','empty-swing','pill-organizer',
+    'person-hugging-pillow','river-stones','cooking-together','night-sky-stars',
+    'hospital-hallway','hands-holding-coffee','autumn-leaves-path','window-condensation',
+  ];
+  return `${BUNNY_CDN_BASE}/library/lib-${num}-${names[i]}.webp`;
+});
 
 const CATEGORIES = [
   { slug: "the-weight", name: "The Weight" },
@@ -80,16 +97,10 @@ const KALESH_PHRASES = [
 ];
 
 const CONVERSATIONAL_INTERJECTIONS = [
-  "Stay with me here.",
-  "I know, I know.",
-  "Wild, right?",
-  "Think about that for a second.",
-  "Here is the thing though.",
-  "And honestly?",
-  "Look.",
-  "Sit with that for a moment.",
-  "No really.",
-  "Bear with me.",
+  "Stay with me here.", "I know, I know.", "Wild, right?",
+  "Think about that for a second.", "Here is the thing though.",
+  "And honestly?", "Look.", "Sit with that for a moment.",
+  "No really.", "Bear with me.",
 ];
 
 const RESEARCHERS = [
@@ -99,41 +110,48 @@ const RESEARCHERS = [
 ];
 
 const BANNED_WORDS = [
-  // Classic AI tells
   'delve','delving','tapestry','paradigm','synergy','leverage','leveraging','unlock','empower',
   'utilize','utilizing','pivotal','embark','embarking','underscore','paramount','seamlessly',
   'robust','beacon','foster','fostering','elevate','curate','curated','bespoke',
   'resonate','harness','intricate','plethora','myriad','comprehensive',
-  // Marketing fluff
   'transformative','groundbreaking','innovative','cutting-edge','revolutionary',
   'state-of-the-art','ever-evolving','game-changing','next-level','world-class',
   'unparalleled','unprecedented','remarkable','extraordinary','exceptional',
-  // Abstract filler
   'profound','profoundly','holistic','nuanced','multifaceted','stakeholders',
   'ecosystem','landscape','realm','sphere','domain',
-  // AI hedging
   'arguably','notably','crucially','importantly','essentially',
   'fundamentally','inherently','intrinsically','substantively',
-  // Bullshit verbs
   'streamline','streamlining','optimize','optimizing','facilitate','facilitating',
   'amplify','catalyze','propel','spearhead','orchestrate','navigate','traverse',
-  // AI connectors
   'furthermore','moreover','additionally','consequently','subsequently',
   'thereby','thusly','wherein','whereby',
-  // Banned phrases
   'manifest','manifesting','manifestation','lean into','leaning into',
   'showing up for','show up for','authentic self','safe space','hold space',
   'holding space','sacred container','raise your vibration',
   'needless to say','in conclusion','it is important to note','it is worth noting',
 ];
 
-// Post-process to remove any AI words that slip through
+const FALLBACK_PRODUCTS = [
+  { name: 'The Body Keeps the Score by Bessel van der Kolk', asin: '0143127748' },
+  { name: 'Burnout: The Secret to Unlocking the Stress Cycle', asin: '1984818325' },
+  { name: 'YnM Weighted Blanket', asin: 'B073429DV2' },
+  { name: 'The 36-Hour Day by Nancy Mace', asin: '1421422239' },
+  { name: 'UTK Cordless Heating Pad', asin: 'B0F98J3TS7' },
+  { name: 'MONAHITO Meditation Cushion', asin: 'B0BMFY81DF' },
+  { name: "Dr Teal's Lavender Epsom Salt Soak", asin: 'B07NF79DKC' },
+  { name: 'Gaiam Yoga Mat Premium 6mm', asin: 'B07NHSFZSB' },
+  { name: 'Ring Indoor Cam 1080p HD', asin: 'B0B6GJBKRK' },
+  { name: 'Stanley Quencher H2.0 Tumbler 40oz', asin: 'B0DCDS4D5L' },
+  { name: 'Radical Acceptance by Tara Brach', asin: '0553380990' },
+  { name: "Man's Search for Meaning by Viktor Frankl", asin: '0807014273' },
+];
+
 function cleanAIWords(text) {
   const replacements = {
     'profound': 'deep', 'profoundly': 'deeply', 'transformative': 'life-changing',
     'holistic': 'whole-person', 'nuanced': 'layered', 'multifaceted': 'complex',
     'delve': 'dig', 'delving': 'digging', 'tapestry': 'web',
-    'landscape': 'territory', 'paradigm': 'framework', 'synergy': 'connection',
+    'landscape': 'territory', 'paradigm': 'model', 'synergy': 'connection',
     'leverage': 'use', 'leveraging': 'using', 'robust': 'strong',
     'utilize': 'use', 'utilizing': 'using', 'facilitate': 'support',
     'facilitating': 'supporting', 'innovative': 'creative',
@@ -144,7 +162,6 @@ function cleanAIWords(text) {
     'foster': 'build', 'fostering': 'building',
     'moreover': 'And', 'furthermore': 'And',
     'additionally': 'Also', 'consequently': 'So', 'subsequently': 'Then',
-    // New expanded list
     'unlock': 'open', 'empower': 'strengthen', 'underscore': 'highlight',
     'paramount': 'critical', 'seamlessly': 'smoothly', 'beacon': 'light',
     'elevate': 'lift', 'curate': 'choose', 'curated': 'chosen', 'bespoke': 'custom',
@@ -163,7 +180,6 @@ function cleanAIWords(text) {
     'spearhead': 'lead', 'orchestrate': 'arrange', 'navigate': 'move through', 'traverse': 'cross',
     'thereby': 'and so', 'thusly': 'so', 'wherein': 'where', 'whereby': 'through which',
   };
-  
   for (const [word, replacement] of Object.entries(replacements)) {
     const regex = new RegExp(`\\b${word}\\b`, 'gi');
     text = text.replace(regex, (match) => {
@@ -172,12 +188,8 @@ function cleanAIWords(text) {
         : replacement;
     });
   }
-  
-  // Remove emdashes
   text = text.replace(/ \u2014 /g, ', ').replace(/\u2014/g, ', ');
   text = text.replace(/ \u2013 /g, ', ').replace(/\u2013/g, ', ');
-  
-  // Remove banned phrases
   text = text.replace(/this is where\b/gi, 'Here');
   text = text.replace(/lean into/gi, 'move toward');
   text = text.replace(/leaning into/gi, 'moving toward');
@@ -194,27 +206,66 @@ function cleanAIWords(text) {
   text = text.replace(/in conclusion/gi, 'So');
   text = text.replace(/it is important to note/gi, 'Worth noting');
   text = text.replace(/it is worth noting/gi, 'Worth noting');
-  
   return text;
 }
 
-async function main() {
-  if (!AUTO_GEN_ENABLED) {
-    console.log('[generate] AUTO_GEN_ENABLED is false. Exiting.');
-    process.exit(0);
+// ─── BUNNY LIBRARY IMAGE ROTATION ───
+async function assignLibraryImage(slug) {
+  const sourceImage = LIBRARY_IMAGES[Math.floor(Math.random() * LIBRARY_IMAGES.length)];
+  const sourceKey = sourceImage.replace(`${BUNNY_CDN_BASE}/`, '');
+
+  // Download the library image
+  const dlResp = await fetch(sourceImage);
+  if (!dlResp.ok) throw new Error(`Failed to download library image: ${sourceImage}`);
+  const imgBuffer = Buffer.from(await dlResp.arrayBuffer());
+
+  // Upload as hero with article slug
+  const heroPath = `images/hero/${slug}.webp`;
+  await fetch(`https://${BUNNY_STORAGE_HOST}/${BUNNY_STORAGE_ZONE}/${heroPath}`, {
+    method: 'PUT',
+    headers: { 'AccessKey': BUNNY_STORAGE_PASSWORD, 'Content-Type': 'application/octet-stream' },
+    body: imgBuffer,
+  });
+
+  // Upload as OG with article slug
+  const ogPath = `images/og/${slug}.webp`;
+  await fetch(`https://${BUNNY_STORAGE_HOST}/${BUNNY_STORAGE_ZONE}/${ogPath}`, {
+    method: 'PUT',
+    headers: { 'AccessKey': BUNNY_STORAGE_PASSWORD, 'Content-Type': 'application/octet-stream' },
+    body: imgBuffer,
+  });
+
+  return {
+    heroImage: `${BUNNY_CDN_BASE}/${heroPath}`,
+    ogImage: `${BUNNY_CDN_BASE}/${ogPath}`,
+  };
+}
+
+// ─── SMART RAMP-UP SCHEDULE ───
+function shouldGenerate(articleCount) {
+  const now = new Date();
+  const day = now.getUTCDay(); // 0=Sun, 6=Sat
+  if (day === 0 || day === 6) return { generate: false, reason: 'Weekend' };
+
+  const hour = now.getUTCHours();
+
+  if (articleCount < 200) {
+    // Phase 1: Ramp-Up - 3 articles per weekday at 08:00, 12:00, 17:00 UTC
+    if (hour === 8 || hour === 12 || hour === 17) {
+      return { generate: true, reason: `Ramp-up phase (${articleCount} articles, hour ${hour})` };
+    }
+    return { generate: false, reason: `Ramp-up phase but wrong hour (${hour})` };
+  } else {
+    // Phase 2: Cruise - 1 article per weekday at 08:00 UTC
+    if (hour === 8) {
+      return { generate: true, reason: `Cruise phase (${articleCount} articles)` };
+    }
+    return { generate: false, reason: `Cruise phase but wrong hour (${hour})` };
   }
+}
 
-  if (!ANTHROPIC_API_KEY || !FAL_KEY || !GH_PAT) {
-    console.error('[generate] Missing required env vars. Exiting.');
-    process.exit(1);
-  }
-
-  console.log('[generate] Starting article generation...');
-
-  // Load existing articles
-  const articles = JSON.parse(fs.readFileSync(ARTICLES_PATH, 'utf-8'));
+async function generateOneArticle(articles) {
   const existingCount = articles.length;
-  console.log(`[generate] ${existingCount} existing articles.`);
 
   // Pick category (round-robin)
   const categoryCounts = {};
@@ -222,7 +273,7 @@ async function main() {
   for (const a of articles) categoryCounts[a.category] = (categoryCounts[a.category] || 0) + 1;
   const minCat = CATEGORIES.reduce((a, b) => (categoryCounts[a.slug] || 0) <= (categoryCounts[b.slug] || 0) ? a : b);
 
-  // Determine backlink type: 14% kalesh, 33% amazon, 23% external, 30% internal
+  // Determine backlink type
   const rand = Math.random();
   const backlinkType = rand < 0.14 ? 'kalesh' : rand < 0.47 ? 'amazon' : rand < 0.70 ? 'external' : 'internal';
 
@@ -234,26 +285,20 @@ async function main() {
   const openerTypes = ['scene-setting', 'provocation', 'first-person', 'question', 'named-reference', 'gut-punch'];
   const openerType = openerTypes[Math.floor(Math.random() * openerTypes.length)];
 
-  // Pick phrases (3-5 random)
+  // Pick phrases, interjections, researchers
   const phraseCount = 3 + Math.floor(Math.random() * 3);
-  const shuffled = [...KALESH_PHRASES].sort(() => Math.random() - 0.5);
-  const selectedPhrases = shuffled.slice(0, phraseCount);
-
-  // Pick interjections (2 random)
+  const selectedPhrases = [...KALESH_PHRASES].sort(() => Math.random() - 0.5).slice(0, phraseCount);
   const interjections = [...CONVERSATIONAL_INTERJECTIONS].sort(() => Math.random() - 0.5).slice(0, 2);
-
-  // Pick researchers (1-2 random)
   const researcherCount = 1 + Math.floor(Math.random() * 2);
   const selectedResearchers = [...RESEARCHERS].sort(() => Math.random() - 0.5).slice(0, researcherCount);
 
-  // Pick existing articles for internal links
+  // Internal links
   const internalLinks = articles
     .filter(a => a.category !== minCat.slug)
     .sort(() => Math.random() - 0.5)
     .slice(0, 5)
     .map(a => ({ title: a.title, url: `/${a.category}/${a.slug}` }));
 
-  // Build Claude prompt with full humanization rules
   const systemPrompt = `You are writing for ${SITE_NAME} (${SITE_DOMAIN}). Author identity: ${AUTHOR_NAME}, ${AUTHOR_TITLE}. Website: ${AUTHOR_URL}.
 
 VOICE RULES (follow exactly):
@@ -274,13 +319,12 @@ ABSOLUTELY BANNED (zero tolerance):
 - ZERO "This is where" as a sentence starter
 - ZERO generic H2 headers like "Understanding X" or "Moving Forward" or "The Path Ahead"
 
-HARD RULES for this article:
+HARD RULES:
 - 1,600 to 2,000 words (strict)
 - Zero em-dashes. Use commas, periods, colons, or parentheses instead.
 - Never use these phrases: "it's important to note," "in conclusion," "in summary," "in the realm of," "dive deep into," "at the end of the day," "in today's fast-paced world," "plays a crucial role," "a testament to," "when it comes to," "cannot be overstated," "it goes without saying," "last but not least," "first and foremost."
 - Contractions throughout. You're. Don't. It's. That's. I've. We'll.
 - Vary sentence length aggressively. Some fragments. Some long ones that stretch across a full breath. Some just three words.
-- Direct address ("you") throughout OR first-person ("I / my") throughout. Pick one.
 - Include at least 2 conversational openers somewhere in the piece: "Here's the thing," "Honestly," "Look," "Truth is," "But here's what's interesting," "Think about it," "That said."
 - Concrete specifics over abstractions. A name. A number. A moment.
 - 3 Amazon product links embedded naturally in prose, each followed by "(paid link)" in plain text. Use only ASINs from the provided catalog.
@@ -309,170 +353,164 @@ ${backlinkType === 'external' ? `- Also include 1 external link with rel="nofoll
 
 Return JSON: { "title": "...", "excerpt": "...", "body": "...", "faqs": [["Q","A"],...] }`;
 
+  // ─── CALL DEEPSEEK V4-PRO ───
+  const response = await fetch('https://api.deepseek.com/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'deepseek-v4-pro',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      max_tokens: 8000,
+      temperature: 0.85,
+    }),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`DeepSeek API error: ${response.status} ${errText}`);
+  }
+
+  const data = await response.json();
+  const text = data.choices[0].message.content;
+  
+  // Try multiple parsing strategies
+  let article;
+  const cleaned = text.replace(/^```json?\n?/, '').replace(/\n?```$/, '').trim();
   try {
-    // Call Anthropic
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 8000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }],
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Anthropic API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const text = data.content[0].text;
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    article = JSON.parse(cleaned);
+  } catch {
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error('No JSON in response');
-    
-    let article = JSON.parse(jsonMatch[0]);
-    
-    // Post-process: clean AI words and emdashes
-    article.body = cleanAIWords(article.body);
+    article = JSON.parse(jsonMatch[0]);
+  }
 
-    // Verify 3 Amazon links exist; inject fallbacks if LLM missed any
-    const amazonCount = (article.body.match(/amazon\.com/g) || []).length;
-    if (amazonCount < 3) {
-      // ALL ASINs verified from actual Amazon product page URLs in search results
-      const fallbackProducts = [
-        { name: 'The Body Keeps the Score by Bessel van der Kolk', asin: '0143127748', desc: 'a book that changed how many people understand trauma and the nervous system' },
-        { name: 'Burnout: The Secret to Unlocking the Stress Cycle by Emily Nagoski', asin: '1984818325', desc: 'a book that finally explains why rest alone does not fix burnout' },
-        { name: 'Weighted Blanket by YnM', asin: 'B073429DV2', desc: 'a weighted blanket that helps the nervous system settle when sleep will not come' },
-        { name: 'The 36-Hour Day by Nancy Mace', asin: '1421422239', desc: 'the most practical guide to dementia caregiving that exists' },
-        { name: 'UTK Cordless Heating Pad', asin: 'B0F98J3TS7', desc: 'a heating pad for the back pain that comes from lifting, bending, and carrying' },
-        { name: 'MONAHITO Meditation Cushion', asin: 'B0BMFY81DF', desc: 'a meditation cushion for the five minutes of stillness that matter more than you think' },
-        { name: 'Dr Teal\'s Lavender Epsom Salt Soak', asin: 'B07NF79DKC', desc: 'an epsom salt soak that turns a bath into the closest thing to therapy you can get at home' },
-        { name: 'Gaiam Yoga Mat Premium 6mm', asin: 'B07NHSFZSB', desc: 'a yoga mat for the stretching your body has been asking for' },
-        { name: 'Ring Indoor Cam 1080p HD', asin: 'B0B6GJBKRK', desc: 'a camera that lets you check in on your loved one without driving across town' },
-        { name: 'Stanley Quencher H2.0 Tumbler 40oz', asin: 'B0DCDS4D5L', desc: 'a tumbler that keeps your water cold all day because dehydration makes everything worse' },
-        { name: 'Radical Acceptance by Tara Brach', asin: '0553380990', desc: 'a book that teaches you how to stop fighting what is and start working with it' },
-        { name: 'Man\'s Search for Meaning by Viktor Frankl', asin: '0807014273', desc: 'a book about finding purpose in suffering that hits different when you are a caregiver' },
-      ];
-      const templates = [
-        'One resource I often point people toward is',
-        'Something that has helped many caregivers I work with is',
-        'A practical starting point is',
-      ];
-      const needed = 3 - amazonCount;
-      const shuffledProducts = fallbackProducts.sort(() => Math.random() - 0.5);
-      for (let i = 0; i < needed; i++) {
-        const p = shuffledProducts[i];
-        const t = templates[i % templates.length];
-        const linkHtml = `<p>${t} <a href="https://www.amazon.com/dp/${p.asin}?tag=${AMAZON_TAG}" rel="nofollow sponsored">${p.name}</a>, ${p.desc}.</p>`;
-        // Insert before the health disclaimer
-        if (article.body.includes('informational purposes')) {
-          article.body = article.body.replace(/<p><em>This article/,  linkHtml + '\n<p><em>This article');
-        } else {
-          article.body += '\n' + linkHtml;
-        }
+  // Post-process: clean AI words and emdashes
+  article.body = cleanAIWords(article.body);
+
+  // Verify 3 Amazon links; inject fallbacks if needed
+  const amazonCount = (article.body.match(/amazon\.com/g) || []).length;
+  if (amazonCount < 3) {
+    const templates = [
+      'One resource I often point people toward is',
+      'Something that has helped many caregivers I work with is',
+      'A practical starting point is',
+    ];
+    const shuffledProducts = [...FALLBACK_PRODUCTS].sort(() => Math.random() - 0.5);
+    const needed = 3 - amazonCount;
+    for (let i = 0; i < needed; i++) {
+      const p = shuffledProducts[i];
+      const t = templates[i % templates.length];
+      const linkHtml = `<p>${t} <a href="https://www.amazon.com/dp/${p.asin}?tag=${AMAZON_TAG}" rel="nofollow sponsored">${p.name}</a> (paid link).</p>`;
+      if (article.body.includes('informational purposes')) {
+        article.body = article.body.replace(/<p><em>This article/, linkHtml + '\n<p><em>This article');
+      } else {
+        article.body += '\n' + linkHtml;
       }
-      console.log(`[generate] Injected ${needed} fallback Amazon links.`);
     }
-    
-    const slug = article.title.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
+    console.log(`[generate] Injected ${needed} fallback Amazon links.`);
+  }
 
-    // Verify word count
-    const wordCount = article.body.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(w => w).length;
-    if (wordCount < 1200 || wordCount > 1800) {
-      console.warn(`[generate] Word count ${wordCount} outside range. Proceeding anyway.`);
-    }
+  const slug = article.title.toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 
-    // Generate image via FAL.ai
-    const imagePrompt = `Painterly watercolor editorial illustration for '${article.title}': warm golden light, tender caregiving scene, luminous amber and cream tones. No text, no words, no watermarks.`;
-    
-    const falResponse = await fetch('https://fal.run/fal-ai/flux/schnell', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Key ${FAL_KEY}`,
-      },
-      body: JSON.stringify({
-        prompt: imagePrompt,
-        image_size: { width: 1200, height: 675 },
-        num_images: 1,
-      }),
-    });
+  // Verify word count
+  const wordCount = article.body.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(w => w).length;
 
-    let heroImage = `${BUNNY_CDN_BASE}/images/default-hero.webp`;
-    let ogImage = `${BUNNY_CDN_BASE}/images/default-og.webp`;
+  // Quality gate: reject if outside 1200-2500
+  if (wordCount < 1200 || wordCount > 2500) {
+    throw new Error(`Word count ${wordCount} outside 1200-2500 range. Rejecting.`);
+  }
 
-    if (falResponse.ok) {
-      const falData = await falResponse.json();
-      const imageUrl = falData.images[0].url;
-      
-      // Download and upload to Bunny
-      const imgResponse = await fetch(imageUrl);
-      const imgBuffer = Buffer.from(await imgResponse.arrayBuffer());
-      
-      // Upload hero
-      const heroPath = `images/hero/${slug}.webp`;
-      await fetch(`https://${BUNNY_STORAGE_HOST}/${BUNNY_STORAGE_ZONE}/${heroPath}`, {
-        method: 'PUT',
-        headers: { 'AccessKey': BUNNY_STORAGE_PASSWORD, 'Content-Type': 'application/octet-stream' },
-        body: imgBuffer,
-      });
-      heroImage = `${BUNNY_CDN_BASE}/${heroPath}`;
+  // ─── BUNNY LIBRARY IMAGE (replaces Fal.ai) ───
+  const { heroImage, ogImage } = await assignLibraryImage(slug);
 
-      // Upload OG
-      const ogPath = `images/og/${slug}.webp`;
-      await fetch(`https://${BUNNY_STORAGE_HOST}/${BUNNY_STORAGE_ZONE}/${ogPath}`, {
-        method: 'PUT',
-        headers: { 'AccessKey': BUNNY_STORAGE_PASSWORD, 'Content-Type': 'application/octet-stream' },
-        body: imgBuffer,
-      });
-      ogImage = `${BUNNY_CDN_BASE}/${ogPath}`;
-    }
+  const newArticle = {
+    id: existingCount + 1,
+    slug,
+    title: article.title,
+    excerpt: article.excerpt,
+    category: minCat.slug,
+    categoryName: minCat.name,
+    dateISO: new Date().toISOString(),
+    readingTime: Math.ceil(wordCount / 250),
+    body: article.body,
+    faqs: article.faqs || [],
+    faqCount,
+    openerType,
+    backlinkType,
+    isChallengeConclusion: Math.random() < 0.3,
+    heroImage,
+    ogImage,
+    wordCount,
+  };
 
-    // Build article object
-    const newArticle = {
-      id: existingCount + 1,
-      slug,
-      title: article.title,
-      excerpt: article.excerpt,
-      category: minCat.slug,
-      categoryName: minCat.name,
-      dateISO: new Date().toISOString(),
-      readingTime: Math.ceil(wordCount / 250),
-      body: article.body,
-      faqs: article.faqs || [],
-      faqCount: faqCount,
-      openerType,
-      backlinkType,
-      isChallengeConclusion: Math.random() < 0.3,
-      imagePrompt,
-      heroImage,
-      ogImage,
-      wordCount,
-    };
+  return newArticle;
+}
 
-    articles.push(newArticle);
-    fs.writeFileSync(ARTICLES_PATH, JSON.stringify(articles, null, 2));
-    console.log(`[generate] Created: "${newArticle.title}" in ${minCat.name} (${wordCount} words)`);
+async function main() {
+  if (!AUTO_GEN_ENABLED) {
+    console.log('[generate] AUTO_GEN_ENABLED is false. Exiting.');
+    process.exit(0);
+  }
 
-    // Push to GitHub
-    const { execSync } = await import('child_process');
-    execSync(`cd ${ROOT} && git add -A && git commit -m "Auto-gen: ${newArticle.title}" && git push`, {
-      env: { ...process.env, GIT_AUTHOR_NAME: 'Auto-Gen', GIT_AUTHOR_EMAIL: 'auto@keepersflame.love', GIT_COMMITTER_NAME: 'Auto-Gen', GIT_COMMITTER_EMAIL: 'auto@keepersflame.love' },
-      stdio: 'inherit',
-    });
-
-    console.log('[generate] Pushed to GitHub.');
-  } catch (err) {
-    console.error('[generate] Error:', err.message);
+  if (!DEEPSEEK_API_KEY || !GH_PAT) {
+    console.error('[generate] Missing DEEPSEEK_API_KEY or GH_PAT. Exiting.');
     process.exit(1);
   }
+
+  const articles = JSON.parse(fs.readFileSync(ARTICLES_PATH, 'utf-8'));
+  const schedule = shouldGenerate(articles.length);
+
+  if (!schedule.generate) {
+    console.log(`[generate] Skipping: ${schedule.reason}`);
+    process.exit(0);
+  }
+
+  console.log(`[generate] ${schedule.reason}. Starting article generation...`);
+  console.log(`[generate] ${articles.length} existing articles.`);
+
+  const MAX_RETRIES = 3;
+  let article = null;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      article = await generateOneArticle(articles);
+      console.log(`[generate] Created: "${article.title}" (${article.wordCount} words) on attempt ${attempt}`);
+      break;
+    } catch (err) {
+      console.error(`[generate] Attempt ${attempt} failed: ${err.message}`);
+      if (attempt === MAX_RETRIES) {
+        console.error('[generate] All retries exhausted. Exiting.');
+        process.exit(1);
+      }
+      await new Promise(r => setTimeout(r, 5000));
+    }
+  }
+
+  articles.push(article);
+  fs.writeFileSync(ARTICLES_PATH, JSON.stringify(articles, null, 2));
+
+  // Push to GitHub
+  const { execSync } = await import('child_process');
+  execSync(`cd ${ROOT} && git add -A && git commit -m "Auto-gen: ${article.title}" && git push`, {
+    env: {
+      ...process.env,
+      GIT_AUTHOR_NAME: 'Auto-Gen',
+      GIT_AUTHOR_EMAIL: 'auto@keepersflame.love',
+      GIT_COMMITTER_NAME: 'Auto-Gen',
+      GIT_COMMITTER_EMAIL: 'auto@keepersflame.love',
+    },
+    stdio: 'inherit',
+  });
+
+  console.log('[generate] Pushed to GitHub.');
 }
 
 main();

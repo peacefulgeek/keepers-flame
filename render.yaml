@@ -18,15 +18,7 @@ services:
         value: spankyspinola-20
       - key: AUTO_GEN_ENABLED
         value: "true"
-      - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: FAL_KEY
-        sync: false
-      - key: BUNNY_STORAGE_ZONE
-        sync: false
-      - key: BUNNY_API_KEY
-        sync: false
-      - key: BUNNY_PULL_ZONE_URL
+      - key: DEEPSEEK_API_KEY
         sync: false
       - key: GH_PAT
         sync: false
