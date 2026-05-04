@@ -1,7 +1,7 @@
 {
   "name": "keepers-flame",
   "version": "1.0.0",
-  "description": "The Keeper's Flame — When You're the One Holding Everyone Together",
+  "description": "The Keeper's Flame \u2014 When You're the One Holding Everyone Together",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -44,5 +44,9 @@
       "esbuild",
       "sharp"
     ]
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
   }
 }
